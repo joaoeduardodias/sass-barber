@@ -1,0 +1,8 @@
+{
+  "extends": "@barber/config/tsconfig/node.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": "."
+  },
+  "include": ["src"]
+}

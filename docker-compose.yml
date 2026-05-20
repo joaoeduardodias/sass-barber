@@ -1,0 +1,89 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: barber-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: barber_dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: barber-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: src/apps/api/Dockerfile
+      target: development
+    container_name: barber-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/barber_dev
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+      API_PORT: 3001
+      API_HOST: 0.0.0.0
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./src/apps/api:/app/src/apps/api
+      - ./src/packages:/app/src/packages
+      - /app/node_modules
+      - /app/apps/api/node_modules
+    command: pnpm --filter=@barber/api dev
+
+  web:
+    build:
+      context: .
+      dockerfile: src/apps/web/Dockerfile
+      target: development
+    container_name: barber-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NODE_ENV: development
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src/apps/web:/app/src/apps/web
+      - ./src/packages:/app/src/packages
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
+    command: pnpm --filter=@barber/web dev
+
+volumes:
+  postgres_data:
+  redis_data:

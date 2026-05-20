@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  OWNER
+  BARBER
+  CUSTOMER
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// better-auth required models
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  phone         String?
+  role          UserRole @default(CUSTOMER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions         Session[]
+  accounts         Account[]
+  ownedBarbershops Barbershop[]
+  barberProfile    BarberProfile?
+  appointments     Appointment[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+  @@map("verifications")
+}
+
+// Domain models
+model Barbershop {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  address     String
+  phone       String
+  logoUrl     String?
+  ownerId     String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner        User            @relation(fields: [ownerId], references: [id])
+  barbers      BarberProfile[]
+  services     Service[]
+  appointments Appointment[]
+
+  @@map("barbershops")
+}
+
+model BarberProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  barbershopId String
+  bio          String?
+  avatarUrl    String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  barbershop   Barbershop   @relation(fields: [barbershopId], references: [id])
+  appointments Appointment[]
+
+  @@map("barber_profiles")
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  duration     Int
+  price        Decimal  @db.Decimal(10, 2)
+  barbershopId String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  barbershop   Barbershop    @relation(fields: [barbershopId], references: [id])
+  appointments Appointment[]
+
+  @@map("services")
+}
+
+model Appointment {
+  id           String            @id @default(cuid())
+  customerId   String
+  barberId     String
+  serviceId    String
+  barbershopId String
+  scheduledAt  DateTime
+  status       AppointmentStatus @default(PENDING)
+  notes        String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  customer   User          @relation(fields: [customerId], references: [id])
+  barber     BarberProfile @relation(fields: [barberId], references: [id])
+  service    Service       @relation(fields: [serviceId], references: [id])
+  barbershop Barbershop    @relation(fields: [barbershopId], references: [id])
+
+  @@map("appointments")
+}
