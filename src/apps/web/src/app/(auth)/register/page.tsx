@@ -1,9 +1,38 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
+'use client'
 
-export const metadata: Metadata = { title: 'Criar conta' }
+import { authClient } from '@/lib/auth-client'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function RegisterPage() {
+  const router = useRouter()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    const form = new FormData(e.currentTarget)
+
+    const { error } = await authClient.signUp.email({
+      name: form.get('name') as string,
+      email: form.get('email') as string,
+      password: form.get('password') as string,
+      callbackURL: '/dashboard',
+    })
+
+    if (error) {
+      setError(error.message ?? 'Erro ao criar conta. Tente novamente.')
+      setLoading(false)
+      return
+    }
+
+    router.push('/dashboard')
+  }
+
   return (
     <>
       <div className="mb-6">
@@ -11,15 +40,17 @@ export default function RegisterPage() {
         <p className="text-sm text-zinc-500 mt-1">Comece a gerenciar sua barbearia hoje</p>
       </div>
 
-      <form className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-sm font-medium text-zinc-700">
             Nome completo
           </label>
           <input
             id="name"
+            name="name"
             type="text"
             placeholder="João Silva"
+            required
             className="w-full h-10 px-3 rounded-md border border-zinc-200 bg-white text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition"
           />
         </div>
@@ -30,8 +61,10 @@ export default function RegisterPage() {
           </label>
           <input
             id="email"
+            name="email"
             type="email"
             placeholder="voce@exemplo.com"
+            required
             className="w-full h-10 px-3 rounded-md border border-zinc-200 bg-white text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition"
           />
         </div>
@@ -42,17 +75,23 @@ export default function RegisterPage() {
           </label>
           <input
             id="password"
+            name="password"
             type="password"
             placeholder="••••••••"
+            required
+            minLength={8}
             className="w-full h-10 px-3 rounded-md border border-zinc-200 bg-white text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent transition"
           />
         </div>
 
+        {error && <p className="text-sm text-red-600">{error}</p>}
+
         <button
           type="submit"
-          className="w-full h-10 bg-zinc-900 text-white text-sm font-medium rounded-md hover:bg-zinc-700 transition-colors"
+          disabled={loading}
+          className="w-full h-10 bg-zinc-900 text-white text-sm font-medium rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Criar conta
+          {loading ? 'Criando conta…' : 'Criar conta'}
         </button>
       </form>
 

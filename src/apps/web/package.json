@@ -14,6 +14,7 @@
   "dependencies": {
     "@barber/types": "workspace:*",
     "@barber/ui": "workspace:*",
+    "better-auth": "^1.0.0",
     "lucide-react": "^1.16.0",
     "next": "^15.0.0",
     "react": "^19.0.0",

@@ -1,7 +1,9 @@
 'use client'
 
+import { authClient } from '@/lib/auth-client'
 import { CalendarDays, LayoutDashboard, LogOut, Scissors, Settings, Tag, Users } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
@@ -14,9 +16,19 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const { data: session } = authClient.useSession()
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`)
+
+  async function handleSignOut() {
+    await authClient.signOut()
+    router.push('/login')
+  }
+
+  const userName = session?.user?.name ?? 'Minha Conta'
+  const userInitial = userName.charAt(0).toUpperCase()
 
   return (
     <aside className="w-[var(--sidebar-width)] shrink-0 flex flex-col h-screen bg-white border-r">
@@ -72,15 +84,16 @@ export function Sidebar() {
             className="w-7 h-7 rounded-full bg-zinc-900 shrink-0 flex items-center justify-center text-white text-xs font-semibold"
             aria-hidden="true"
           >
-            M
+            {userInitial}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-zinc-900 truncate">Minha Conta</p>
-            <p className="text-xs text-zinc-400 truncate">Owner</p>
+            <p className="text-xs font-semibold text-zinc-900 truncate">{userName}</p>
+            <p className="text-xs text-zinc-400 truncate">{session?.user?.email ?? ''}</p>
           </div>
           <button
             type="button"
             aria-label="Sair"
+            onClick={handleSignOut}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700"
           >
             <LogOut className="w-3.5 h-3.5" />

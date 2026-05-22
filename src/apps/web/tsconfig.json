@@ -5,7 +5,9 @@
       "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next-env.d.ts"],
   "exclude": ["node_modules"]
