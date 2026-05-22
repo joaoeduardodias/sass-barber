@@ -1,6 +1,6 @@
-import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { betterAuth } from 'better-auth'
 import { prisma } from '@barber/database'
+import { betterAuth } from 'better-auth'
+import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { env } from './env'
 
 export const auth = betterAuth({

@@ -1,4 +1,5 @@
 FROM node:20-alpine AS base
+RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare pnpm@9.6.0 --activate
 
 FROM base AS development
@@ -17,6 +18,7 @@ RUN pnpm --filter=@barber/database db:generate
 RUN pnpm --filter=@barber/api build
 
 FROM node:20-alpine AS production
+RUN apk add --no-cache openssl
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app/apps/api/dist ./dist

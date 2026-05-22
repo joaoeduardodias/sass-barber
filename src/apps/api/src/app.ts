@@ -26,8 +26,16 @@ export async function createApp() {
   })
 
   // Delegate all /api/auth/* routes to better-auth
-  app.all('/api/auth/*', (request, reply) => {
-    return auth.handler(request.raw, reply.raw)
+  app.all('/api/auth/*', async (request, reply) => {
+    const req = new Request(`${env.BETTER_AUTH_URL}${request.url}`, {
+      method: request.method,
+      headers: request.headers as Record<string, string>,
+      body: ['GET', 'HEAD'].includes(request.method) ? undefined : JSON.stringify(request.body),
+    })
+    const res = await auth.handler(req)
+    res.headers.forEach((value, key) => reply.header(key, value))
+    const body = await res.text()
+    return reply.status(res.status).send(body)
   })
 
   await registerRoutes(app)
