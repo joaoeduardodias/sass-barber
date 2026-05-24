@@ -6,7 +6,7 @@
 
 **Architecture:** Fastify API with zod validation, better-auth session guards, and cookie/header tenant scoping returning `{ data }` envelopes. Next.js web with a shadcn/ui design system in `@barber/ui`, RSC + TanStack Query hybrid data layer through a same-origin BFF proxy, and react-hook-form + zod forms. Auth stays better-auth (authentication only); authorization/multi-tenancy use custom models.
 
-**Tech Stack:** Fastify 5, fastify-type-provider-zod, fastify-plugin, better-auth 1.x, Prisma 7 (pg driver adapter), Next.js 15 App Router, React 19, Tailwind 3, shadcn/ui (manual, React-19 style, no forwardRef), TanStack Query 5, next-themes, react-hook-form, @hookform/resolvers, zod 4, vitest + RTL.
+**Tech Stack:** Fastify 5, fastify-type-provider-zod 5 (zod-4 compatible), fastify-plugin, better-auth 1.x, Prisma 7 (pg driver adapter), Next.js 15 App Router, React 19, Tailwind 3, shadcn/ui (manual, React-19 style, no forwardRef), TanStack Query 5, next-themes, react-hook-form, @hookform/resolvers, zod 4, vitest + RTL.
 
 **Spec:** `docs/superpowers/specs/2026-05-22-foundations-design.md`
 
@@ -197,7 +197,7 @@ Edit `src/apps/api/package.json` `dependencies` — add `fastify-plugin` and `fa
     "dotenv": "^16.4.0",
     "fastify": "^5.0.0",
     "fastify-plugin": "^5.0.0",
-    "fastify-type-provider-zod": "^4.0.0",
+    "fastify-type-provider-zod": "^5.0.0",
     "zod": "^4.0.0"
 ```
 
@@ -215,11 +215,11 @@ Expected: `CREATE DATABASE` (or a harmless "already exists" error).
 
 - [ ] **Step 3: Push the schema to the test DB (one-time; re-run after schema changes)**
 
-Run from repo root (the inline env var overrides the dev DB for this command only):
+Run from repo root (Prisma 7 has no `--skip-generate`; pass the test DB URL explicitly via `--url`):
 
 ```bash
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/barber_test" \
-  pnpm --filter=@barber/database exec prisma db push --skip-generate
+pnpm --filter=@barber/database exec prisma db push \
+  --url "postgresql://postgres:postgres@localhost:5432/barber_test"
 ```
 
 Expected: "Your database is now in sync with your Prisma schema."
