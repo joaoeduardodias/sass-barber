@@ -287,14 +287,15 @@ afterAll(async () => {
 
 - [ ] **Step 7: Create the app helper**
 
-Create `src/apps/api/tests/helpers/app.ts`:
+Create `src/apps/api/tests/helpers/app.ts`. It optionally accepts a Fastify plugin so tests can register throwaway probe routes **before boot** (routes cannot be added after `ready()` in Fastify 5, and the probe plugin loads after the guard plugins so decorators like `requireAuth` are available):
 
 ```ts
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify'
 import { createApp } from '../../src/app'
 
-export async function buildTestApp(): Promise<FastifyInstance> {
+export async function buildTestApp(setup?: FastifyPluginAsync): Promise<FastifyInstance> {
   const app = await createApp()
+  if (setup) await app.register(setup)
   await app.ready()
   return app
 }
@@ -586,16 +587,16 @@ import { createTestUser } from './helpers/auth'
 let app: FastifyInstance
 
 beforeAll(async () => {
-  app = await buildTestApp()
-  app.get('/api/_probe', { preHandler: [app.requireAuth] }, async (request) => ({
-    data: { userId: request.user?.id, role: request.user?.role },
-  }))
-  app.get(
-    '/api/_owner-only',
-    { preHandler: [app.requireAuth, app.requireRole('OWNER')] },
-    async () => ({ data: 'ok' }),
-  )
-  await app.ready()
+  app = await buildTestApp(async (probe) => {
+    probe.get('/api/_probe', { preHandler: [probe.requireAuth] }, async (request) => ({
+      data: { userId: request.user?.id, role: request.user?.role },
+    }))
+    probe.get(
+      '/api/_owner-only',
+      { preHandler: [probe.requireAuth, probe.requireRole('OWNER')] },
+      async () => ({ data: 'ok' }),
+    )
+  })
 })
 afterAll(async () => {
   await app.close()
@@ -763,15 +764,15 @@ import { createBarberMembership, createBarbershop } from './helpers/db'
 let app: FastifyInstance
 
 beforeAll(async () => {
-  app = await buildTestApp()
-  app.get(
-    '/api/_scoped',
-    { preHandler: [app.requireAuth, app.requireBarbershop] },
-    async (request) => ({
-      data: { barbershopId: request.barbershopId, role: request.membershipRole },
-    }),
-  )
-  await app.ready()
+  app = await buildTestApp(async (probe) => {
+    probe.get(
+      '/api/_scoped',
+      { preHandler: [probe.requireAuth, probe.requireBarbershop] },
+      async (request) => ({
+        data: { barbershopId: request.barbershopId, role: request.membershipRole },
+      }),
+    )
+  })
 })
 afterAll(async () => {
   await app.close()
