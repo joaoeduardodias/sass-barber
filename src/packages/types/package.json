@@ -9,6 +9,9 @@
     "lint": "biome check src",
     "lint:fix": "biome check --write src"
   },
+  "dependencies": {
+    "zod": "^4.0.0"
+  },
   "devDependencies": {
     "@barber/config": "workspace:*",
     "typescript": "^5.7.0"
