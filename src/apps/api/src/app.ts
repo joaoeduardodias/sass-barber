@@ -7,6 +7,7 @@ import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod
 import { auth } from './auth'
 import { env } from './env'
 import { errorHandler, notFoundHandler } from './lib/errors'
+import { authPlugin } from './plugins/auth'
 import { registerRoutes } from './routes'
 
 export async function createApp() {
@@ -31,6 +32,8 @@ export async function createApp() {
     max: env.RATE_LIMIT_MAX,
     timeWindow: env.RATE_LIMIT_WINDOW,
   })
+
+  await app.register(authPlugin)
 
   // Delegate all /api/auth/* routes to better-auth
   app.all('/api/auth/*', async (request, reply) => {
