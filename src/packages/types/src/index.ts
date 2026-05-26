@@ -25,3 +25,19 @@ export type AppointmentStatus =
   | 'COMPLETED'
   | 'CANCELLED'
   | 'NO_SHOW'
+
+export * from './schemas/barbershop'
+
+export interface Barbershop {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  address: string
+  phone: string
+  logoUrl: string | null
+  ownerId: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}

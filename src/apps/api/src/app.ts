@@ -3,16 +3,24 @@ import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import sensible from '@fastify/sensible'
 import Fastify from 'fastify'
+import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
 import { auth } from './auth'
 import { env } from './env'
+import { errorHandler, notFoundHandler } from './lib/errors'
+import { authPlugin } from './plugins/auth'
 import { registerRoutes } from './routes'
 
 export async function createApp() {
   const app = Fastify({
     logger: {
-      level: env.NODE_ENV === 'production' ? 'info' : 'debug',
+      level: env.NODE_ENV === 'production' ? 'info' : env.NODE_ENV === 'test' ? 'silent' : 'debug',
     },
   })
+
+  app.setValidatorCompiler(validatorCompiler)
+  app.setSerializerCompiler(serializerCompiler)
+  app.setErrorHandler(errorHandler)
+  app.setNotFoundHandler(notFoundHandler)
 
   await app.register(sensible)
   await app.register(helmet)
@@ -24,6 +32,8 @@ export async function createApp() {
     max: env.RATE_LIMIT_MAX,
     timeWindow: env.RATE_LIMIT_WINDOW,
   })
+
+  await app.register(authPlugin)
 
   // Delegate all /api/auth/* routes to better-auth
   app.all('/api/auth/*', async (request, reply) => {
