@@ -16,3 +16,17 @@ export function createBarbershop(ownerId: string, overrides?: { name?: string; s
 export function createBarberMembership(userId: string, barbershopId: string) {
   return prisma.barberProfile.create({ data: { userId, barbershopId } })
 }
+
+export function createService(
+  barbershopId: string,
+  overrides?: { name?: string; duration?: number; price?: number },
+) {
+  return prisma.service.create({
+    data: {
+      name: overrides?.name ?? 'Corte Masculino',
+      duration: overrides?.duration ?? 30,
+      price: overrides?.price ?? 35,
+      barbershopId,
+    },
+  })
+}

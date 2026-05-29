@@ -7,7 +7,7 @@ const mockCookies = {
 }
 vi.mock('next/headers', () => ({ cookies: async () => mockCookies }))
 
-import { getActiveBarbershopId, setActiveBarbershopId } from '../tenant'
+import { getActiveBarbershopId, setActiveBarbershopId } from '../tenant.server'
 
 beforeEach(() => store.clear())
 

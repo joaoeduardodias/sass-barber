@@ -18,7 +18,7 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
   headers.set('cookie', cookieStore.toString())
 
   const activeShop = cookieStore.get('active-barbershop')?.value
-  if (activeShop) headers.set('x-barbershop-id', activeShop)
+  if (activeShop && !headers.has('x-barbershop-id')) headers.set('x-barbershop-id', activeShop)
   if (init?.body && !headers.has('content-type')) headers.set('content-type', 'application/json')
 
   const res = await fetch(`${API_URL}/api${path}`, { ...init, headers, cache: 'no-store' })

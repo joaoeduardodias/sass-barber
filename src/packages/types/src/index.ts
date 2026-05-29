@@ -27,6 +27,8 @@ export type AppointmentStatus =
   | 'NO_SHOW'
 
 export * from './schemas/barbershop'
+export * from './schemas/service'
+export * from './schemas/barber'
 
 export interface Barbershop {
   id: string
