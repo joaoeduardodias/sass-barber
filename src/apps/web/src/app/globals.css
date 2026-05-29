@@ -5,18 +5,61 @@
 @layer base {
   :root {
     --sidebar-width: 15rem;
+
+    --background: 40 30% 98%;
+    --foreground: 24 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 28 80% 45%;
+    --primary-foreground: 40 40% 98%;
+    --secondary: 30 20% 94%;
+    --secondary-foreground: 24 10% 18%;
+    --muted: 30 20% 94%;
+    --muted-foreground: 24 6% 45%;
+    --accent: 32 60% 90%;
+    --accent-foreground: 24 30% 20%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 28 80% 45%;
+    --radius: 0.65rem;
   }
 
-  body {
-    @apply bg-zinc-50 text-zinc-900 antialiased;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  .dark {
+    --background: 24 10% 8%;
+    --foreground: 40 20% 96%;
+    --card: 24 10% 11%;
+    --card-foreground: 40 20% 96%;
+    --popover: 24 10% 11%;
+    --popover-foreground: 40 20% 96%;
+    --primary: 30 85% 55%;
+    --primary-foreground: 24 30% 10%;
+    --secondary: 24 8% 18%;
+    --secondary-foreground: 40 20% 96%;
+    --muted: 24 8% 18%;
+    --muted-foreground: 30 10% 65%;
+    --accent: 26 30% 22%;
+    --accent-foreground: 40 20% 96%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 24 8% 20%;
+    --input: 24 8% 22%;
+    --ring: 30 85% 55%;
   }
 
   * {
-    @apply border-zinc-200;
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
   ::selection {
-    @apply bg-zinc-900 text-white;
+    @apply bg-primary text-primary-foreground;
   }
 }
