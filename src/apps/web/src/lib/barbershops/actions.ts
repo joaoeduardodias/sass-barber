@@ -1,7 +1,7 @@
 'use server'
 
 import { apiFetch } from '@/lib/api/server'
-import { setActiveBarbershopId } from '@/lib/tenant'
+import { setActiveBarbershopId } from '@/lib/tenant.server'
 import type { Barbershop, CreateBarbershopInput, UpdateBarbershopInput } from '@barber/types'
 import { revalidatePath } from 'next/cache'
 

@@ -1,6 +1,6 @@
 import { Topbar } from '@/components/topbar'
 import { getBarbershop, listBarbershops } from '@/lib/barbershops/queries'
-import { getActiveBarbershopId } from '@/lib/tenant'
+import { getActiveBarbershopId } from '@/lib/tenant.server'
 import { Building2 } from 'lucide-react'
 import { SettingsForm } from './settings-form'
 

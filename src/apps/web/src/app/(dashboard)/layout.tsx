@@ -1,7 +1,7 @@
 import { Sidebar } from '@/components/sidebar'
 import { listBarbershops } from '@/lib/barbershops/queries'
 import { getServerSession } from '@/lib/session'
-import { getActiveBarbershopId } from '@/lib/tenant'
+import { getActiveBarbershopId } from '@/lib/tenant.server'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
