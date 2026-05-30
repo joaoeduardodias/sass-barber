@@ -3,6 +3,7 @@ import { Scissors } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
+import { SignOutButton } from './minha-conta/sign-out-button'
 
 export default async function CustomerLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession()
@@ -19,20 +20,7 @@ export default async function CustomerLayout({ children }: { children: ReactNode
         </Link>
         <div className="ml-auto flex items-center gap-4">
           <span className="text-sm text-muted-foreground">{session.user.name}</span>
-          <form
-            action={async () => {
-              'use server'
-              const { cookies } = await import('next/headers')
-              const jar = await cookies()
-              jar.delete('better-auth.session_token')
-              jar.delete('__Secure-better-auth.session_token')
-              redirect('/login')
-            }}
-          >
-            <button type="submit" className="text-sm text-muted-foreground hover:text-foreground">
-              Sair
-            </button>
-          </form>
+          <SignOutButton />
         </div>
       </header>
       {children}

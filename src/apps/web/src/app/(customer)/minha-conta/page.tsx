@@ -1,6 +1,10 @@
 import { listMyAppointments } from '@/lib/appointments/queries'
+import type { AppointmentWithDetails } from '@barber/types'
 import { Calendar, Clock, Scissors } from 'lucide-react'
+import Link from 'next/link'
 import { CancelButton } from './cancel-button'
+
+export const metadata = { title: 'Meus Agendamentos' }
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING: 'Pendente',
@@ -24,7 +28,7 @@ function AppointmentCard({
   appointment,
   showCancel,
 }: {
-  appointment: Awaited<ReturnType<typeof listMyAppointments>>[number]
+  appointment: AppointmentWithDetails
   showCancel: boolean
 }) {
   const date = new Date(appointment.scheduledAt)
@@ -64,8 +68,6 @@ function AppointmentCard({
   )
 }
 
-export const metadata = { title: 'Meus Agendamentos' }
-
 export default async function MinhaContaPage() {
   const appointments = await listMyAppointments()
 
@@ -87,9 +89,9 @@ export default async function MinhaContaPage() {
         {upcoming.length === 0 ? (
           <div className="rounded-lg border border-dashed py-12 text-center text-sm text-muted-foreground">
             Nenhum agendamento próximo.{' '}
-            <a href="/" className="text-amber-600 underline">
+            <Link href="/" className="text-amber-600 underline">
               Agendar agora
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="flex flex-col gap-3">

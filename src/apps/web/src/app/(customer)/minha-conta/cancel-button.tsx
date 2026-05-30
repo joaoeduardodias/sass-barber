@@ -15,11 +15,17 @@ import { useState, useTransition } from 'react'
 export function CancelButton({ appointmentId }: { appointmentId: string }) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
+  const [error, setError] = useState('')
 
   function handleCancel() {
+    setError('')
     startTransition(async () => {
-      await cancelAppointmentAction(appointmentId)
-      setOpen(false)
+      try {
+        await cancelAppointmentAction(appointmentId)
+        setOpen(false)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao cancelar')
+      }
     })
   }
 
@@ -35,6 +41,7 @@ export function CancelButton({ appointmentId }: { appointmentId: string }) {
           <DialogTitle>Cancelar agendamento?</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">Esta ação não pode ser desfeita.</p>
+        {error && <p className="text-xs text-destructive">{error}</p>}
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={pending}>
             Manter
