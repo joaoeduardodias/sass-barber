@@ -1,5 +1,13 @@
 import { z } from 'zod'
 
+export type AppointmentStatus =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'NO_SHOW'
+
 export const createAppointmentSchema = z.object({
   barbershopId: z.string().min(1),
   serviceId: z.string().min(1),
@@ -10,6 +18,7 @@ export const createAppointmentSchema = z.object({
 
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>
 
+/** Intentional public projection of Barbershop — exposes only fields safe for unauthenticated consumers. */
 export interface PublicBarbershop {
   id: string
   name: string
@@ -20,6 +29,7 @@ export interface PublicBarbershop {
   logoUrl: string | null
 }
 
+/** Intentional public projection of Barber — exposes only fields safe for unauthenticated consumers. */
 export interface PublicBarber {
   id: string
   bio: string | null
@@ -34,7 +44,7 @@ export interface AppointmentWithDetails {
   serviceId: string
   barbershopId: string
   scheduledAt: string
-  status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW'
+  status: AppointmentStatus
   notes: string | null
   createdAt: string
   updatedAt: string
