@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify'
+import { appointmentRoutes } from './appointments'
 import { barberRoutes } from './barbers'
 import { barbershopRoutes } from './barbershops'
 import { healthRoute } from './health'
@@ -11,4 +12,5 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(serviceRoutes, { prefix: '/api' })
   await app.register(barberRoutes, { prefix: '/api' })
   await app.register(publicRoutes, { prefix: '/api' })
+  await app.register(appointmentRoutes, { prefix: '/api' })
 }
