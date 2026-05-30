@@ -7,6 +7,7 @@ export interface SessionUser {
   id: string
   name: string
   email: string
+  role: 'ADMIN' | 'OWNER' | 'BARBER' | 'CUSTOMER'
 }
 
 export async function getServerSession(): Promise<{ user: SessionUser } | null> {

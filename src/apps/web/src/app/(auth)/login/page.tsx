@@ -44,7 +44,6 @@ export default function LoginPage() {
     const { error } = await authClient.signIn.email({
       email: form.get('email') as string,
       password: form.get('password') as string,
-      callbackURL: '/dashboard',
     })
 
     if (error) {
@@ -53,7 +52,9 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/dashboard')
+    const session = await authClient.getSession()
+    const role = (session.data?.user as Record<string, unknown>)?.role
+    router.push(role === 'CUSTOMER' ? '/minha-conta' : '/dashboard')
   }
 
   async function handleGoogle() {

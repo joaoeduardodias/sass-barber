@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession()
   if (!session) redirect('/login')
+  if (session.user.role === 'CUSTOMER') redirect('/minha-conta')
 
   const shops = await listBarbershops()
   const cookieActive = await getActiveBarbershopId()
