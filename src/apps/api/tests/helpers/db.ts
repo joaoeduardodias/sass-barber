@@ -30,3 +30,23 @@ export function createService(
     },
   })
 }
+
+export function createAppointment(data: {
+  customerId: string
+  barberId: string
+  serviceId: string
+  barbershopId: string
+  scheduledAt?: Date
+  status?: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW'
+}) {
+  return prisma.appointment.create({
+    data: {
+      customerId: data.customerId,
+      barberId: data.barberId,
+      serviceId: data.serviceId,
+      barbershopId: data.barbershopId,
+      scheduledAt: data.scheduledAt ?? new Date(Date.now() + 24 * 60 * 60 * 1000),
+      status: data.status ?? 'PENDING',
+    },
+  })
+}
