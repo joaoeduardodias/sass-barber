@@ -31,7 +31,7 @@ export function errorHandler(
   if (hasZodFastifySchemaValidationErrors(error)) {
     const message = error.validation
       .map((v) => {
-        const issue = v.params?.issue
+        const issue = v.params?.issue as { path?: string[]; message?: string } | undefined
         const path = issue?.path?.join('.') || 'campo'
         return `${path}: ${issue?.message ?? v.message}`
       })
@@ -46,13 +46,11 @@ export function errorHandler(
 
   if (isResponseSerializationError(error)) {
     request.log.error(error)
-    return reply
-      .status(500)
-      .send({
-        error: 'Internal Server Error',
-        message: 'Erro ao serializar resposta',
-        statusCode: 500,
-      })
+    return reply.status(500).send({
+      error: 'Internal Server Error',
+      message: 'Erro ao serializar resposta',
+      statusCode: 500,
+    })
   }
 
   const statusCode = error.statusCode ?? 500

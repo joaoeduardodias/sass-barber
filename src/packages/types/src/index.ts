@@ -18,15 +18,10 @@ export interface ApiError {
 
 export type UserRole = 'ADMIN' | 'OWNER' | 'BARBER' | 'CUSTOMER'
 
-export type AppointmentStatus =
-  | 'PENDING'
-  | 'CONFIRMED'
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'NO_SHOW'
-
 export * from './schemas/barbershop'
+export * from './schemas/service'
+export * from './schemas/barber'
+export * from './schemas/appointment'
 
 export interface Barbershop {
   id: string

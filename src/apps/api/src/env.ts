@@ -10,6 +10,8 @@ const envSchema = z.object({
   BETTER_AUTH_URL: z.string(),
   JWT_SECRET: z.string(),
   JWT_EXPIRES_IN: z.string().default('7d'),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
   RATE_LIMIT_MAX: z.coerce.number().default(100),
   RATE_LIMIT_WINDOW: z.coerce.number().default(60000),
 })

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const PUBLIC_PATHS = ['/', '/login', '/register']
+const PUBLIC_PREFIXES = ['/b/']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -9,7 +10,9 @@ export function middleware(request: NextRequest) {
     request.cookies.get('better-auth.session_token') ??
     request.cookies.get('__Secure-better-auth.session_token')
 
-  const isPublic = PUBLIC_PATHS.some((p) => pathname === p)
+  const isPublic =
+    PUBLIC_PATHS.some((p) => pathname === p) ||
+    PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix))
   const isAuthenticated = Boolean(sessionCookie?.value)
 
   if (!isPublic && !isAuthenticated) {

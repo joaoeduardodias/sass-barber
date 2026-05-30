@@ -8,6 +8,7 @@ import { auth } from './auth'
 import { env } from './env'
 import { errorHandler, notFoundHandler } from './lib/errors'
 import { authPlugin } from './plugins/auth'
+import { tenantPlugin } from './plugins/tenant'
 import { registerRoutes } from './routes'
 
 export async function createApp() {
@@ -34,6 +35,7 @@ export async function createApp() {
   })
 
   await app.register(authPlugin)
+  await app.register(tenantPlugin)
 
   // Delegate all /api/auth/* routes to better-auth
   app.all('/api/auth/*', async (request, reply) => {

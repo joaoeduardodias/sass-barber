@@ -3,7 +3,9 @@ RUN corepack enable && corepack prepare pnpm@9.6.0 --activate
 
 FROM base AS development
 WORKDIR /app
-COPY . .
+RUN chown -R node:node /app
+COPY --chown=node:node . .
+USER node
 RUN pnpm install
 EXPOSE 3000
 CMD ["pnpm", "--filter=@barber/web", "dev"]
