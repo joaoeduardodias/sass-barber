@@ -29,6 +29,7 @@ export type AppointmentStatus =
 export * from './schemas/barbershop'
 export * from './schemas/service'
 export * from './schemas/barber'
+export * from './schemas/appointment'
 
 export interface Barbershop {
   id: string
