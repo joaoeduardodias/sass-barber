@@ -53,8 +53,8 @@ export default function LoginPage() {
     }
 
     const session = await authClient.getSession()
-    const role = (session.data?.user as Record<string, unknown>)?.role
-    router.push(role === 'CUSTOMER' ? '/minha-conta' : '/dashboard')
+    const user = session.data?.user as { role?: string } | undefined
+    router.push(user?.role === 'CUSTOMER' ? '/minha-conta' : '/dashboard')
   }
 
   async function handleGoogle() {
