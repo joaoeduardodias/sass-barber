@@ -1,3 +1,67 @@
+# Landing Page — Alinhamento de Cores Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Substituir classes Tailwind hardcoded (zinc/white) na landing page pelas variáveis CSS do projeto e adicionar o `ThemeToggle` ao header.
+
+**Architecture:** Alteração em arquivo único (`app/page.tsx`). As variáveis CSS já estão definidas em `globals.css` e o componente `ThemeToggle` já existe em `src/components/theme-toggle.tsx`. Nenhuma nova dependência ou arquivo de componente é necessário.
+
+**Tech Stack:** Next.js 15 App Router, Tailwind CSS (via CSS custom properties), `next-themes`, Vitest + Testing Library
+
+---
+
+## File Map
+
+| Ação | Arquivo |
+|---|---|
+| Modificar | `src/apps/web/src/app/page.tsx` |
+| Criar | `src/apps/web/src/__tests__/landing-page.test.tsx` |
+
+---
+
+### Task 1: Escrever teste que verifica o ThemeToggle na landing page
+
+**Files:**
+- Create: `src/apps/web/src/__tests__/landing-page.test.tsx`
+
+- [ ] **Step 1: Criar o arquivo de teste**
+
+```tsx
+import { render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('next-themes', () => ({
+  useTheme: () => ({ theme: 'light', setTheme: vi.fn() }),
+}))
+
+import Home from '../app/page'
+
+describe('Landing page', () => {
+  it('renders the theme toggle button', () => {
+    render(<Home />)
+    expect(screen.getByRole('button', { name: 'Alternar tema' })).toBeInTheDocument()
+  })
+})
+```
+
+- [ ] **Step 2: Rodar o teste e confirmar que falha**
+
+```bash
+pnpm --filter=@barber/web test src/__tests__/landing-page.test.tsx
+```
+
+Esperado: FAIL com `Unable to find an accessible element with the role "button" and name "Alternar tema"` (ThemeToggle ainda não está na página).
+
+---
+
+### Task 2: Atualizar `page.tsx` com variáveis CSS e ThemeToggle
+
+**Files:**
+- Modify: `src/apps/web/src/app/page.tsx`
+
+- [ ] **Step 1: Substituir o conteúdo completo do arquivo**
+
+```tsx
 import { ThemeToggle } from '@/components/theme-toggle'
 import { CalendarDays, Scissors, TrendingUp, Users } from 'lucide-react'
 import Link from 'next/link'
@@ -38,7 +102,7 @@ export default function Home() {
         <nav className="flex items-center gap-1">
           <Link
             href="/login"
-            className="text-sm text-muted-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground"
           >
             Entrar
           </Link>
@@ -73,7 +137,7 @@ export default function Home() {
             </Link>
             <Link
               href="/login"
-              className="text-muted-foreground font-medium transition-colors text-sm px-5 py-2.5 rounded-md border border-border hover:bg-accent hover:text-accent-foreground"
+              className="text-muted-foreground hover:text-foreground font-medium transition-colors text-sm px-5 py-2.5 rounded-md border border-border hover:bg-accent hover:text-accent-foreground"
             >
               Já tenho conta
             </Link>
@@ -105,3 +169,36 @@ export default function Home() {
     </div>
   )
 }
+```
+
+- [ ] **Step 2: Rodar o teste e confirmar que passa**
+
+```bash
+pnpm --filter=@barber/web test src/__tests__/landing-page.test.tsx
+```
+
+Esperado: PASS
+
+- [ ] **Step 3: Rodar todos os testes do web app para confirmar que não há regressões**
+
+```bash
+pnpm --filter=@barber/web test
+```
+
+Esperado: todos os testes passam.
+
+- [ ] **Step 4: Verificar visualmente em http://localhost:3000**
+
+Confirmar:
+- Fundo levemente creme/quente (não branco puro) no modo claro
+- Botões "Começar grátis" em laranja/âmbar (cor primária), não preto
+- Logo icon também em laranja
+- ThemeToggle visível no canto direito do header
+- Ao clicar no ThemeToggle, página alterna para dark mode com fundo escuro quente
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/apps/web/src/app/page.tsx src/apps/web/src/__tests__/landing-page.test.tsx
+git commit -m "feat(web): align landing page colors with app palette and add theme toggle"
+```

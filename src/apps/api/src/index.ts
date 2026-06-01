@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import './load-env'
 import { createApp } from './app'
 import { env } from './env'
 

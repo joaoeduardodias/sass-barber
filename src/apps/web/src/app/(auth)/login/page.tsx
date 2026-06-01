@@ -44,7 +44,6 @@ export default function LoginPage() {
     const { error } = await authClient.signIn.email({
       email: form.get('email') as string,
       password: form.get('password') as string,
-      callbackURL: '/dashboard',
     })
 
     if (error) {
@@ -53,12 +52,22 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/dashboard')
+    const session = await authClient.getSession()
+    const user = session.data?.user as { role?: string } | undefined
+    router.push(user?.role === 'CUSTOMER' ? '/minha-conta' : '/dashboard')
   }
 
   async function handleGoogle() {
+    setError('')
     setGoogleLoading(true)
-    await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard' })
+    const { error } = await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: `${window.location.origin}/dashboard`,
+    })
+    if (error) {
+      setError('Não foi possível entrar com Google. Tente novamente.')
+      setGoogleLoading(false)
+    }
   }
 
   return (

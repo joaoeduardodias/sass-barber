@@ -56,7 +56,7 @@ export const appointmentRoutes: FastifyPluginAsyncZod = async (app) => {
       include: {
         service: { select: { id: true, name: true, duration: true, price: true } },
         barber: { select: { id: true, user: { select: { name: true } } } },
-        barbershop: { select: { id: true, name: true } },
+        barbershop: { select: { id: true, name: true, slug: true } },
       },
     })
 
@@ -77,7 +77,7 @@ export const appointmentRoutes: FastifyPluginAsyncZod = async (app) => {
       include: {
         service: { select: { id: true, name: true, duration: true, price: true } },
         barber: { select: { id: true, user: { select: { name: true } } } },
-        barbershop: { select: { id: true, name: true } },
+        barbershop: { select: { id: true, name: true, slug: true } },
       },
       orderBy: { scheduledAt: 'desc' },
     })
@@ -115,7 +115,7 @@ export const appointmentRoutes: FastifyPluginAsyncZod = async (app) => {
         include: {
           service: { select: { id: true, name: true, duration: true, price: true } },
           barber: { select: { id: true, user: { select: { name: true } } } },
-          barbershop: { select: { id: true, name: true } },
+          barbershop: { select: { id: true, name: true, slug: true } },
         },
       })
 

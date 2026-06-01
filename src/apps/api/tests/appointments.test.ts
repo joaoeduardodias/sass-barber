@@ -140,6 +140,31 @@ describe('GET /api/appointments/my', () => {
     expect(data[0].service).toBeDefined()
     expect(data[0].barber.user).toBeDefined()
   })
+
+  it('includes barbershop slug in the response', async () => {
+    const owner = await createTestUser({ role: 'OWNER' })
+    const barber = await createTestUser({ role: 'BARBER' })
+    const customer = await createTestUser({ role: 'CUSTOMER' })
+    const shop = await createBarbershop(owner.id, { slug: `slug-in-my-${Date.now()}` })
+    const barberProfile = await createBarberMembership(barber.id, shop.id)
+    const service = await createService(shop.id)
+
+    await createAppointment({
+      customerId: customer.id,
+      barberId: barberProfile.id,
+      serviceId: service.id,
+      barbershopId: shop.id,
+    })
+
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/appointments/my',
+      headers: { cookie: customer.cookie },
+    })
+    expect(res.statusCode).toBe(200)
+    const { data } = res.json()
+    expect(data[0].barbershop.slug).toBe(shop.slug)
+  })
 })
 
 describe('PATCH /api/appointments/:id/cancel', () => {

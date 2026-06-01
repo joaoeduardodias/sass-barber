@@ -1,12 +1,13 @@
+import { env } from '@/env'
 import { cookies } from 'next/headers'
 
-const API_URL =
-  process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
+const API_URL = env.API_INTERNAL_URL ?? env.NEXT_PUBLIC_API_URL
 
 export interface SessionUser {
   id: string
   name: string
   email: string
+  role: 'ADMIN' | 'OWNER' | 'BARBER' | 'CUSTOMER'
 }
 
 export async function getServerSession(): Promise<{ user: SessionUser } | null> {
