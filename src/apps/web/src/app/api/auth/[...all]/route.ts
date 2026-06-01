@@ -18,6 +18,7 @@ async function proxy(req: NextRequest) {
     body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
     // @ts-expect-error — duplex needed for streaming body in Node 18+
     duplex: 'half',
+    redirect: 'manual',
   })
 
   return new Response(res.body, {

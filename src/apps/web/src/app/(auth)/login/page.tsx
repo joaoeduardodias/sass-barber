@@ -58,8 +58,16 @@ export default function LoginPage() {
   }
 
   async function handleGoogle() {
+    setError('')
     setGoogleLoading(true)
-    await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard' })
+    const { error } = await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: `${window.location.origin}/dashboard`,
+    })
+    if (error) {
+      setError('Não foi possível entrar com Google. Tente novamente.')
+      setGoogleLoading(false)
+    }
   }
 
   return (
