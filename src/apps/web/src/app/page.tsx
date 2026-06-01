@@ -38,7 +38,7 @@ export default function Home() {
         <nav className="flex items-center gap-1">
           <Link
             href="/login"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground"
+            className="text-sm text-muted-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground"
           >
             Entrar
           </Link>
@@ -73,7 +73,7 @@ export default function Home() {
             </Link>
             <Link
               href="/login"
-              className="text-muted-foreground hover:text-foreground font-medium transition-colors text-sm px-5 py-2.5 rounded-md border border-border hover:bg-accent hover:text-accent-foreground"
+              className="text-muted-foreground font-medium transition-colors text-sm px-5 py-2.5 rounded-md border border-border hover:bg-accent hover:text-accent-foreground"
             >
               Já tenho conta
             </Link>
