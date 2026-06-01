@@ -50,5 +50,5 @@ export interface AppointmentWithDetails {
   updatedAt: string
   service: { id: string; name: string; duration: number; price: number }
   barber: { id: string; user: { name: string } }
-  barbershop: { id: string; name: string }
+  barbershop: { id: string; name: string; slug: string }
 }
